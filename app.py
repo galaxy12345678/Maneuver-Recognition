@@ -342,7 +342,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title("✈️ F-16 机动动作智能识别系统")
+st.title("✈️动作智能识别系统")
 st.markdown("<p style='color: #64748b; font-size: 16px; margin-top: -15px;'>基于双分支 CNN + SE 注意力机制 + Transformer | 13 类高机动动作精确识别</p>", unsafe_allow_html=True)
 
 model, scaler = load_resources()
