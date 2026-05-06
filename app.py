@@ -12,7 +12,7 @@ matplotlib.use("Agg")
 
 # --- 2. 全局 Matplotlib 样式美化 ---
 plt.rcParams.update({
-    "font.sans-serif": ["Microsoft YaHei", "SimHei", "Arial Unicode MS", "DejaVu Sans"],
+    "font.sans-serif": ["DejaVu Sans", "Arial", "sans-serif"],
     "axes.unicode_minus": False,
     "axes.spines.top": False,      # 移除顶部边框
     "axes.spines.right": False,    # 移除右侧边框
