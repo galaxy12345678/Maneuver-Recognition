@@ -109,8 +109,7 @@ class LegacyModul(nn.Module):
 # ═══════════════════════════════════════════════════════════════
 # 常量定义
 # ═══════════════════════════════════════════════════════════════
-FEATURE_NAMES = ["经度", "纬度", "高度", "滚转角", "俯仰角", "偏航角", "滚转率", "特征8"]
-VERTICAL_CN = ["下降", "平飞", "上升"]
+FEATURE_NAMES = ["Longitude", "Latitude", "Altitude", "Roll", "Pitch", "Yaw", "Roll Rate", "Turn Rate"]  
 VERTICAL_EN = ["Down", "Level", "Up"]
 
 CLASS_CN = {
@@ -221,12 +220,12 @@ def fig_sensor(seq, title):
         ax.set_xticks(range(10))
         ax.tick_params(axis='both', which='major', labelsize=8, colors='#555555')
     
-    fig.suptitle(f"真实标签：{CLASS_CN[title]} ({title})", fontsize=14, fontweight="bold", y=1.02)
+    fig.suptitle(f"Ground Truth：{CLASS_CN[title]} ({title})", fontsize=14, fontweight="bold", y=1.02)
     plt.tight_layout()
     return fig
 
 def fig_confidence(probs, true_class=None):
-    cn = [CLASS_CN[c] for c in CLASS_NAMES]
+    en_labels = CLASS_NAMES
     idx = np.argsort(probs)
     
     colors = []
@@ -239,9 +238,9 @@ def fig_confidence(probs, true_class=None):
             colors.append("#D1D5DB") # 灰色-其他
 
     fig, ax = plt.subplots(figsize=(6, 5))
-    bars = ax.barh([cn[i] for i in idx], probs[idx] * 100, color=colors, height=0.6, edgecolor='none')
+    bars = ax.barh([en_labels[i] for i in idx], probs[idx] * 100, color=colors, height=0.6, edgecolor='none')
     
-    ax.set_xlabel("置信度 (%)", fontsize=10, color="#555")
+    ax.set_xlabel("Confidence (%)", fontsize=10, color="#555")
     ax.set_xlim(0, 115)
     ax.tick_params(axis='y', labelsize=10, left=False)
     ax.xaxis.grid(True, linestyle='--', alpha=0.5)
@@ -258,8 +257,8 @@ def fig_confidence(probs, true_class=None):
 def fig_aux(aux_probs):
     colors = ["#3B82F6" if p == aux_probs.max() else "#E5E7EB" for p in aux_probs]
     fig, ax = plt.subplots(figsize=(5, 3))
-    bars = ax.bar(VERTICAL_CN, aux_probs * 100, color=colors, width=0.5)
-    ax.set_ylabel("置信度 (%)", fontsize=9)
+    bars = ax.bar(VERTICAL_EN, aux_probs * 100, color=colors, width=0.5)
+    ax.set_ylabel("Confidence (%)", fontsize=9)
     ax.set_ylim(0, 120)
     ax.xaxis.grid(False)
     ax.spines['bottom'].set_visible(True)
@@ -273,7 +272,7 @@ def fig_aux(aux_probs):
 
 def fig_confusion(cm):
     norm = cm.astype(float) / cm.sum(axis=1, keepdims=True).clip(min=1)
-    labels = [CLASS_CN[c] for c in CLASS_NAMES]
+    labels = CLASS_NAMES 
     fig, ax = plt.subplots(figsize=(10, 8))
     im = ax.imshow(norm, cmap="PuBu", vmin=0, vmax=1) # 更柔和的蓝紫色系
     plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
@@ -287,8 +286,8 @@ def fig_confusion(cm):
             if v > 0.01: # 只显示>1%的值，保持画面整洁
                 ax.text(j, i, f"{v:.2f}", ha="center", va="center",
                         fontsize=8, color="white" if v > 0.6 else "#333333")
-    ax.set_xlabel("预测类别", fontweight='bold')
-    ax.set_ylabel("真实类别", fontweight='bold')
+    ax.set_xlabel("Predicted Label", fontweight='bold')
+    ax.set_ylabel("True Label", fontweight='bold')
     plt.tight_layout()
     return fig
 
@@ -482,7 +481,7 @@ with tab2:
                 # 画一个干净的柱状图
                 fig, ax = plt.subplots(figsize=(6, 5))
                 colors = ["#10B981" if a >= 95 else "#F59E0B" if a >= 85 else "#EF4444" for a in accs]
-                ax.barh([CLASS_CN[c] for c in CLASS_NAMES], accs, color=colors)
+                ax.barh(CLASS_NAMES, accs, color=colors)
                 ax.set_xlim(0, 110)
                 for i, v in enumerate(accs):
                     ax.text(v + 1, i, f"{v:.1f}%", va='center', fontsize=9, fontweight='bold')
